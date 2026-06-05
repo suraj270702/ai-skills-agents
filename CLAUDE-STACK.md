@@ -19,19 +19,35 @@
 
 ## Skills
 
-Use the following skills when working on related files:
+Use the following skills in the `.ai/skills/` directory when working on related tasks/files:
 
-| File(s) / Context | Skill to load |
-|-------------------|---------------|
-| `*.tsx`, `*.jsx`, `components/**`, `app/**` | `.claude/skills/frontend-patterns/` |
-| `*.ts` anywhere | `.claude/skills/coding-standards/typescript` |
-| `app/api/**`, `server/**`, Hono routes | `.claude/skills/backend-patterns/`, `.claude/skills/api-design/`, `.claude/skills/hono-patterns/` |
-| `*.sql`, `prisma/schema.prisma`, migrations | `.claude/skills/postgres-patterns/`, `.claude/skills/database-migrations/` |
-| `tests/e2e/**`, `*.spec.ts` (Playwright) | `.claude/skills/e2e-testing/` |
-| `Dockerfile`, `docker-compose.yml`, `.github/workflows/**` | `.claude/skills/docker-patterns/`, `.claude/skills/deployment-patterns/` |
-| Any new feature from scratch | `.claude/skills/tdd-workflow/` |
-| Security audit or auth-related code | `.claude/skills/security-review/` |
-| Any iterative/agentic task | `.claude/skills/verification-loop/` |
+| Context / Files | Skill Path | Description |
+|-----------------|------------|-------------|
+| `*.tsx`, `*.jsx`, components | `.ai/skills/frontend-patterns/` | Frontend development patterns for React, Next.js, state management, and UI. |
+| `*.ts` anywhere | `.ai/skills/coding-standards/` | Baseline cross-project coding conventions. |
+| `app/api/**`, `server/**` | `.ai/skills/backend-patterns/` | Backend architecture, database optimization, and server best practices. |
+| API design | `.ai/skills/api-design/` | REST API design patterns (resource naming, status codes, error handling, etc.). |
+| Database schemas / queries | `.ai/skills/postgres-patterns/` | PostgreSQL database query optimization and schema design patterns. |
+| DB Migrations | `.ai/skills/database-migrations/` | Database migration best practices, rollbacks, and zero-downtime deployments. |
+| `tests/e2e/**`, `*.spec.ts` | `.ai/skills/e2e-testing/` | Playwright E2E testing patterns, Page Object Model, and flaky test strategies. |
+| Docker configuration | `.ai/skills/docker-patterns/` | Docker and Compose patterns for local development and orchestration. |
+| Deployment | `.ai/skills/deployment-patterns/` | Deployment workflows, CI/CD pipelines, and health check patterns. |
+| Accessibility auditing | `.ai/skills/accessibility/` | Audit and improve web accessibility following WCAG 2.2 guidelines. |
+| React Accessibility | `.ai/skills/frontend-a11y/` | Practical accessibility patterns (semantic HTML, ARIA, focus) for React/Next.js. |
+| React patterns | `.ai/skills/react-patterns/` | React 18/19 patterns (boundaries, form actions, Suspense, data fetching). |
+| React Performance | `.ai/skills/react-performance/` | React and Next.js performance optimization (waterfalls, bundle size, renders). |
+| React component testing | `.ai/skills/react-testing/` | Component testing with React Testing Library, Vitest/Jest, MSW, and axe. |
+| Redis integrations | `.ai/skills/redis-patterns/` | Redis caching, distributed locks, rate limiting, and pub/sub. |
+| Modern web best practices | `.ai/skills/best-practices/` | Modern web development security, compatibility, and quality rules. |
+| Web audits | `.ai/skills/web-audit/` | Comprehensive audits covering performance, accessibility, and SEO. |
+| Technical SEO | `.ai/skills/seo/` | Optimize web visibility, rankings, sitemaps, robots.txt, and metadata. |
+| Performance optimization | `.ai/skills/performance/` | Performance tuning, Core Web Vitals, speed, and layout shift resolution. |
+| Core Web Vitals | `.ai/skills/core-web-vitals/` | Optimize page experience metrics (LCP, INP, CLS) for better rankings. |
+| TDD workflows | `.ai/skills/tdd-workflow/` | Enforce test-driven development (write-tests-first) with 80%+ test coverage. |
+| Session verification | `.ai/skills/verification-loop/` | Session verification loops to ensure code correctness and test suites. |
+| Next.js Turbopack | `.ai/skills/nextjs-turbopack/` | Turbopack compilation and bundler optimizations. |
+| Node.js crypto / Keccak | `.ai/skills/nodejs-keccak256/` | Safe Ethereum Keccak-256 hashing patterns avoiding standard SHA3-256 mismatch. |
+| UI/UX design rules | `.ai/skills/frontend-design-direction/` | Product-specific frontend design direction and aesthetic rules. |
 
 When spawning subagents, always pass conventions from the respective skill into the agent's prompt.
 
@@ -39,21 +55,26 @@ When spawning subagents, always pass conventions from the respective skill into 
 
 ## Agents
 
-Delegate to these subagents for focused tasks:
+Delegate to these specialized subagents in the `.ai/agents/` directory for focused tasks:
 
-| Task | Agent |
-|------|-------|
-| TypeScript / React / Hono code review | `.claude/agents/typescript-reviewer.md` |
-| PostgreSQL schema, query, index review | `.claude/agents/database-reviewer.md` |
-| Security vulnerabilities, auth, input validation | `.claude/agents/security-reviewer.md` |
-| General quality, readability, patterns | `.claude/agents/code-reviewer.md` |
-| Feature breakdown and implementation plan | `.claude/agents/planner.md` |
-| Architect system design decisions | `.claude/agents/architect.md` |
-| Run and debug Playwright E2E tests | `.claude/agents/e2e-runner.md` |
-| Fix build or type errors | `.claude/agents/build-error-resolver.md` |
-| Remove dead code, improve structure | `.claude/agents/refactor-cleaner.md` |
-| Sync README, JSDoc, API docs | `.claude/agents/doc-updater.md` |
-| Autonomous loop execution | `.claude/agents/loop-operator.md` |
+| Agent File | Purpose / When to Use |
+|------------|-----------------------|
+| `typescript-reviewer.md` | Expert TypeScript/JavaScript code reviewer for type safety, async correctness, and patterns. |
+| `react-reviewer.md` | Expert React/JSX code reviewer for hook correctness, render performance, and client/server boundaries. |
+| `database-reviewer.md` | PostgreSQL specialist for query optimization, schema design, security, and performance. |
+| `security-reviewer.md` | Security vulnerability detection and remediation specialist (OWASP Top 10, secrets, inputs). |
+| `code-reviewer.md` | General expert code reviewer for quality, structure, and maintainability. |
+| `planner.md` | Expert planning specialist for mapping complex features and large-scale refactoring. |
+| `architect.md` | Software architecture specialist for system design, scalability, and technical decisions. |
+| `code-architect.md` | Designs feature architectures and provides detailed implementation blueprints. |
+| `a11y-architect.md` | Accessibility Architect specializing in WCAG 2.2 compliance for inclusive user experience. |
+| `seo-specialist.md` | Technical SEO audits, metadata review, schema markup, and performance optimization. |
+| `e2e-runner.md` | End-to-end testing specialist for running and writing Playwright tests. |
+| `build-error-resolver.md` | Diagnoses and resolves general build/compilation and TypeScript errors quickly. |
+| `react-build-resolver.md` | Fixes React-specific compile errors, hydration mismatches, and bundler configurations. |
+| `code-simplifier.md` | Refines and simplifies code for clarity and maintainability while preserving behavior. |
+| `tdd-guide.md` | Test-Driven Development guide enforcing test-first coding standards. |
+| `type-design-analyzer.md` | Analyzes type structures for safety, invariants, encapsulation, and type-system design. |
 
 ---
 
@@ -163,6 +184,8 @@ project-root/
 ├── lib/                    # Shared utilities (client + server)
 ├── tests/
 │   └── e2e/                # Playwright tests
-├── .claude/                # ECC agents, skills, commands
-└── CLAUDE.md
+├── .ai/                    # Unified AI agents, skills, commands, rules
+├── .claude/                # Directory junction linking to .ai/ (for Claude Code)
+├── GEMINI.md               # Gemini entry point instructions
+└── CLAUDE.md               # Claude Code entry point instructions
 ```
