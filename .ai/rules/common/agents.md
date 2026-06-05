@@ -2,29 +2,38 @@
 
 ## Available Agents
 
-Located in `~/.claude/agents/`:
+Located in `.ai/agents/` (linked to `~/.claude/agents/`):
 
 | Agent | Purpose | When to Use |
 |-------|---------|-------------|
-| planner | Implementation planning | Complex features, refactoring |
-| architect | System design | Architectural decisions |
-| tdd-guide | Test-driven development | New features, bug fixes |
-| code-reviewer | Code review | After writing code |
-| security-reviewer | Security analysis | Before commits |
-| build-error-resolver | Fix build errors | When build fails |
-| e2e-runner | E2E testing | Critical user flows |
-| refactor-cleaner | Dead code cleanup | Code maintenance |
-| doc-updater | Documentation | Updating docs |
-| rust-reviewer | Rust code review | Rust projects |
-| harmonyos-app-resolver | HarmonyOS app development | HarmonyOS/ArkTS projects |
+| **planner** | Expert planning specialist for complex features and refactoring. | Proactively when users request feature implementation, architectural changes, or complex refactoring. |
+| **architect** | Software architecture specialist for system design, scalability, and technical decision-making. | Proactively when planning new features, refactoring large systems, or making architectural decisions. |
+| **code-architect** | Designs feature architectures by analyzing existing codebase patterns and conventions. | When providing implementation blueprints with concrete files, interfaces, data flow, and build order. |
+| **typescript-reviewer** | Expert TypeScript/JavaScript code reviewer specializing in type safety, async correctness, Node/web security, and idiomatic patterns. | For all TypeScript and JavaScript code changes (MUST BE USED for TypeScript/JavaScript projects). |
+| **react-reviewer** | Expert React/JSX code reviewer specializing in hook correctness, render performance, server/client component boundaries, accessibility, and React-specific security. | For any change touching `.tsx`/`.jsx` files or React component logic (MUST BE USED for React projects). |
+| **database-reviewer** | PostgreSQL database specialist for query optimization, schema design, security, and performance. | Proactively when writing SQL, creating migrations, designing schemas, or troubleshooting database performance. |
+| **security-reviewer** | Security vulnerability detection and remediation specialist. | Proactively after writing code that handles user input, authentication, API endpoints, or sensitive data. |
+| **code-reviewer** | Expert code review specialist. Proactively reviews code for quality, security, and maintainability. | Immediately after writing or modifying code (MUST BE USED for all code changes). |
+| **a11y-architect** | Accessibility Architect specializing in WCAG 2.2 compliance for Web and Native platforms. | Proactively when designing UI components, establishing design systems, or auditing code for inclusive user experiences. |
+| **seo-specialist** | SEO specialist for technical SEO audits, on-page optimization, structured data, Core Web Vitals, and content/keyword mapping. | For site audits, meta tag reviews, schema markup, sitemap/robots issues, and SEO remediation. |
+| **e2e-runner** | End-to-end testing specialist using Vercel Agent Browser or Playwright. | Proactively for generating, maintaining, and running E2E tests, managing test journeys, and validating critical user flows. |
+| **build-error-resolver** | Build and TypeScript error resolution specialist. | Proactively when build fails or type errors occur (fixes build/type errors only with minimal diffs). |
+| **react-build-resolver** | Diagnoses and fixes React build failures (Vite, webpack, Next.js, CRA, etc.). | Handles JSX/TSX compile errors, hydration mismatches, server/client boundaries, and bundler configurations. |
+| **code-simplifier** | Simplifies and refines code for clarity, consistency, and maintainability. | Focuses on recently modified code unless instructed otherwise. |
+| **tdd-guide** | Test-Driven Development specialist enforcing write-tests-first methodology. | Proactively when writing new features, fixing bugs, or refactoring code. Ensures 80%+ test coverage. |
+| **type-design-analyzer** | Analyze type design for encapsulation, invariant expression, usefulness, and enforcement. | When designing or refactoring TypeScript interfaces, types, and domains for correctness. |
 
 ## Immediate Agent Usage
 
 No user prompt needed:
-1. Complex feature requests - Use **planner** agent
-2. Code just written/modified - Use **code-reviewer** agent
-3. Bug fix or new feature - Use **tdd-guide** agent
-4. Architectural decision - Use **architect** agent
+1. Complex feature requests or major changes - Use **planner** agent
+2. Designing feature blueprints - Use **code-architect** agent
+3. Code just written/modified - Use **code-reviewer** (or **typescript-reviewer** / **react-reviewer**) agent
+4. Bug fix or new feature - Use **tdd-guide** agent
+5. Architectural decision or system design - Use **architect** agent
+6. Build or TS compilation failures - Use **build-error-resolver** (or **react-build-resolver**) agent
+7. DB migration or PostgreSQL queries - Use **database-reviewer** agent
+8. UI, A11y, or SEO improvements - Use **a11y-architect** or **seo-specialist** agent
 
 ## Parallel Task Execution
 
