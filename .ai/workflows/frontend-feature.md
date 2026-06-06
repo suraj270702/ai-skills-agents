@@ -6,18 +6,18 @@ description: Start the Autonomous Frontend Feature Pipeline sequence to build a 
 
 ### Execution Sequence:
 
-1. **Act as the Product Manager (@pm), Planner (@planner), & Architect (@architect)**:
+1. **Act as the Product Manager (@pm), [Planner](../agents/planner.md) (@planner), & [Architect](../agents/architect.md) (@architect)**:
    - **Role**: Analyze the user's frontend feature requirements, layout designs, and routes.
    - **Action**: Draft the UI specification inside `production_artifacts/Technical_Specification.md`. Include executive summary, functional requirements, component structures, styling, state management, accessibility parameters, and SEO specifications.
    - **Rules & Skills**: Load [best-practices](../skills/best-practices/SKILL.md) and [coding-standards](../skills/coding-standards/SKILL.md). Check [development-workflow.md](../rules/common/development-workflow.md) and [patterns.md](../rules/common/patterns.md).
    - **Gate**: Pause and wait for explicit user approval. Re-run specification generation if user adds inline comments or provides chat feedback. Do not proceed until user explicitly approves.
 
-2. **Shift context, act as the Code Architect (@code-architect) & Type Design Analyzer (@type-design-analyzer)**:
+2. **Shift context, act as the [Code Architect](../agents/code-architect.md) (@code-architect) & [Type Design Analyzer](../agents/type-design-analyzer.md) (@type-design-analyzer)**:
    - **Role**: Define code directories, component structures, props interfaces, and client state boundaries.
    - **Action**: Outline component files list, React component props types, state providers, and page layouts, auditing type boundaries for domain safety.
    - **Rules & Skills**: Check [typescript/patterns.md](../rules/typescript/patterns.md) and [common/patterns.md](../rules/common/patterns.md). Load [frontend-design-direction](../skills/frontend-design-direction/SKILL.md), [nextjs](../skills/nextjs/SKILL.md), and [shadcn](../skills/shadcn/SKILL.md).
 
-3. **Shift context, act as the TDD Guide (@tdd-guide)**:
+3. **Shift context, act as the [TDD Guide](../agents/tdd-guide.md) (@tdd-guide)**:
    - **Role**: Enforce write-tests-first development to ensure 80%+ test coverage.
    - **Action**: Create test files and write failing unit/integration tests for components, helper hooks, and state providers using Vitest and React Testing Library.
    - **Rules & Skills**: Check [testing.md](../rules/common/testing.md) and [typescript/testing.md](../rules/typescript/testing.md). Load [tdd-workflow](../skills/tdd-workflow/SKILL.md) and [react-testing](../skills/react-testing/SKILL.md).
@@ -27,12 +27,12 @@ description: Start the Autonomous Frontend Feature Pipeline sequence to build a 
    - **Action**: Write code for page views, UI components, state contexts, custom hooks, and styling (using Tailwind CSS). Save all files into the codebase. Ensure the code builds cleanly. If typescript or React compile errors occur, act as [build-error-resolver](../agents/build-error-resolver.md) or [react-build-resolver](../agents/react-build-resolver.md) to fix them.
    - **Rules & Skills**: Check [coding-style.md](../rules/common/coding-style.md) and [typescript/coding-style.md](../rules/typescript/coding-style.md). Load [frontend-patterns](../skills/frontend-patterns/SKILL.md), [react-patterns](../skills/react-patterns/SKILL.md), [tailwindcss](../skills/tailwindcss/SKILL.md), and [shadcn](../skills/shadcn/SKILL.md). Run tests until they pass.
 
-5. **Shift context, act as the Accessibility Architect (@a11y-architect) & SEO Specialist (@seo-specialist)**:
+5. **Shift context, act as the [Accessibility Architect](../agents/a11y-architect.md) (@a11y-architect) & [SEO Specialist](../agents/seo-specialist.md) (@seo-specialist)**:
    - **Role**: Ensure WCAG compliance and optimal search ranking.
    - **Action**: Audit component markup for semantic HTML, focus outlines, ARIA roles, and screen-reader accessibility. Review page metadata, title tags, canonical URLs, and structured data layouts.
    - **Rules & Skills**: Load [accessibility](../skills/accessibility/SKILL.md), [frontend-a11y](../skills/frontend-a11y/SKILL.md), and [seo](../skills/seo/SKILL.md).
 
-6. **Shift context, act as the React Reviewer (@react-reviewer) & SEO Specialist (@seo-specialist)**:
+6. **Shift context, act as the [React Reviewer](../agents/react-reviewer.md) (@react-reviewer) & [SEO Specialist](../agents/seo-specialist.md) (@seo-specialist)**:
    - **Role**: Measure performance, eliminate re-renders, and optimize Web Vitals metrics.
    - **Action**: Analyze Core Web Vitals targets:
      - **Largest Contentful Paint (LCP)**: Optimize image sizing, asset loading, and server rendering.
@@ -41,12 +41,12 @@ description: Start the Autonomous Frontend Feature Pipeline sequence to build a 
      - **First Input Delay (FID)**: Check main-thread activity.
    - **Rules & Skills**: Check [performance.md](../rules/common/performance.md) and [common/hooks.md](../rules/common/hooks.md). Load [core-web-vitals](../skills/core-web-vitals/SKILL.md), [performance](../skills/performance/SKILL.md), [web-audit](../skills/web-audit/SKILL.md), and [react-performance](../skills/react-performance/SKILL.md).
 
-7. **Shift context, act as the E2E Runner (@e2e-runner)**:
+7. **Shift context, act as the [E2E Runner](../agents/e2e-runner.md) (@e2e-runner)**:
    - **Role**: Run functional E2E validation.
    - **Action**: Write and run Playwright E2E integration test suites for core user flows. Compile results.
    - **Rules & Skills**: Check [testing.md](../rules/common/testing.md). Load [e2e-testing](../skills/e2e-testing/SKILL.md) and [verification-loop](../skills/verification-loop/SKILL.md).
 
-8. **Shift context, act as the Code Reviewer (@code-reviewer), TypeScript Reviewer (@typescript-reviewer), & Code Simplifier (@code-simplifier)**:
+8. **Shift context, act as the [Code Reviewer](../agents/code-reviewer.md) (@code-reviewer), [TypeScript Reviewer](../agents/typescript-reviewer.md) (@typescript-reviewer), & [Code Simplifier](../agents/code-simplifier.md) (@code-simplifier)**:
    - **Role**: Clean up code complexity.
    - **Action**: Refactor complex hooks/render loops, clean up variables, check styling tokens, perform a final review of the clean code architecture, and ensure all unit/E2E test suites remain green.
    - **Rules & Skills**: Load [best-practices](../skills/best-practices/SKILL.md) and check [coding-style.md](../rules/common/coding-style.md).
