@@ -24,7 +24,7 @@ When the user types `/frontend-feature <ui_feature_description>`, orchestrate th
 
 4. **Shift context, act as the Full-Stack Developer (@engineer)**:
    - **Role**: Translate the specifications and blueprints into clean, DRY frontend code.
-   - **Action**: Write code for page views, UI components, state contexts, custom hooks, and styling (using Vanilla CSS). Save all files into the codebase. Ensure the code builds cleanly. If typescript or React compile errors occur, act as [build-error-resolver](../../.ai/agents/build-error-resolver.md) or [react-build-resolver](../../.ai/agents/react-build-resolver.md) to fix them.
+   - **Action**: Write code for page views, UI components, state contexts, custom hooks, and styling (using Tailwind CSS). Save all files into the codebase. Ensure the code builds cleanly. If typescript or React compile errors occur, act as [build-error-resolver](../../.ai/agents/build-error-resolver.md) or [react-build-resolver](../../.ai/agents/react-build-resolver.md) to fix them.
    - **Rules & Skills**: Check [coding-style.md](../../.ai/rules/common/coding-style.md) and [typescript/coding-style.md](../../.ai/rules/typescript/coding-style.md). Load [frontend-patterns](../../.ai/skills/frontend-patterns/SKILL.md) and [react-patterns](../../.ai/skills/react-patterns/SKILL.md). Run tests until they pass.
 
 5. **Shift context, act as the Accessibility Architect (@a11y-architect) & SEO Specialist (@seo-specialist)**:
