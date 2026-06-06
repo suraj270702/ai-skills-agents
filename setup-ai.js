@@ -40,7 +40,51 @@ try {
   logError('Failed to create .claude link. You may need to run this command in a terminal with appropriate permissions, or run as administrator on Windows.', err);
 }
 
-// 3. Setup Cursor Rules
+// 3. Setup Workflows
+const workflowsSrcDir = path.join(aiDir, 'workflows');
+const workflowsDestDir = path.resolve(__dirname, '.agents', 'workflows');
+
+try {
+  // If old location exists but new one doesn't, migrate files
+  const oldWorkflowsDir = path.resolve(__dirname, '.agents', 'workflows');
+  if (fs.existsSync(oldWorkflowsDir) && !fs.existsSync(workflowsSrcDir)) {
+    log('Migrating workflows from .agents/workflows to .ai/workflows...');
+    fs.mkdirSync(workflowsSrcDir, { recursive: true });
+    const files = fs.readdirSync(oldWorkflowsDir);
+    files.forEach(file => {
+      const src = path.join(oldWorkflowsDir, file);
+      const dest = path.join(workflowsSrcDir, file);
+      if (fs.statSync(src).isFile()) {
+        fs.copyFileSync(src, dest);
+      }
+    });
+  } else {
+    // Ensure new location exists
+    fs.mkdirSync(workflowsSrcDir, { recursive: true });
+  }
+
+  // Ensure dest location (.agents/workflows) exists and copy files from .ai/workflows back to it
+  if (fs.existsSync(workflowsDestDir)) {
+    fs.rmSync(workflowsDestDir, { recursive: true, force: true });
+  }
+  fs.mkdirSync(workflowsDestDir, { recursive: true });
+  
+  if (fs.existsSync(workflowsSrcDir)) {
+    const files = fs.readdirSync(workflowsSrcDir);
+    files.forEach(file => {
+      const src = path.join(workflowsSrcDir, file);
+      const dest = path.join(workflowsDestDir, file);
+      if (fs.statSync(src).isFile()) {
+        fs.copyFileSync(src, dest);
+      }
+    });
+    log('Synchronized workflows from .ai/workflows to .agents/workflows.');
+  }
+} catch (err) {
+  logError('Failed to set up workflows.', err);
+}
+
+// 4. Setup Cursor Rules
 const cursorRulesDir = path.resolve(__dirname, '.cursor', 'rules');
 try {
   if (fs.existsSync(cursorRulesDir)) {
@@ -50,103 +94,106 @@ try {
   log('Created .cursor/rules directory.');
 
   const rulesSrcDir = path.join(aiDir, 'rules');
-  if (fs.existsSync(rulesSrcDir)) {
-    const getFiles = (dir) => {
-      let results = [];
-      const list = fs.readdirSync(dir);
-      list.forEach((file) => {
-        const filePath = path.join(dir, file);
-        const stat = fs.statSync(filePath);
-        if (stat && stat.isDirectory()) {
-          results = results.concat(getFiles(filePath));
-        } else if (file.endsWith('.md')) {
-          results.push(filePath);
-        }
-      });
-      return results;
-    };
+  
+  const getFiles = (dir) => {
+    if (!fs.existsSync(dir)) return [];
+    let results = [];
+    const list = fs.readdirSync(dir);
+    list.forEach((file) => {
+      const filePath = path.join(dir, file);
+      const stat = fs.statSync(filePath);
+      if (stat && stat.isDirectory()) {
+        results = results.concat(getFiles(filePath));
+      } else if (file.endsWith('.md')) {
+        results.push(filePath);
+      }
+    });
+    return results;
+  };
 
-    const files = getFiles(rulesSrcDir);
-    files.forEach((file) => {
-      const relPath = path.relative(rulesSrcDir, file);
-      // Flatten the path structure: replace separators with dashes
-      const name = relPath.replace(/[\\/]/g, '-').replace(/\.md$/, '');
-      const content = fs.readFileSync(file, 'utf8');
+  const rulesFiles = getFiles(rulesSrcDir).map(file => ({ file, srcDir: rulesSrcDir }));
+  const workflowsFiles = getFiles(workflowsSrcDir).map(file => ({ file, srcDir: workflowsSrcDir }));
+  const files = [...rulesFiles, ...workflowsFiles];
 
-      let globs = '*';
-      let description = `${name.replace(/-/g, ' ')} rules`;
-      let fileBody = content;
-      let frontmatter = {};
+  files.forEach(({ file, srcDir }) => {
+    const relPath = path.relative(srcDir, file);
+    // Flatten the path structure: replace separators with dashes
+    const name = relPath.replace(/[\\/]/g, '-').replace(/\.md$/, '');
+    const content = fs.readFileSync(file, 'utf8');
 
-      if (content.trim().startsWith('---')) {
-        const parts = content.split('---');
-        if (parts.length >= 3) {
-          const fmText = parts[1];
-          fileBody = parts.slice(2).join('---').trim();
+    let globs = '*';
+    let description = `${name.replace(/-/g, ' ')} rules`;
+    let fileBody = content;
+    let frontmatter = {};
+
+    if (content.trim().startsWith('---')) {
+      const parts = content.split('---');
+      if (parts.length >= 3) {
+        const fmText = parts[1];
+        fileBody = parts.slice(2).join('---').trim();
+        
+        fmText.split('\n').forEach(line => {
+          const trimmed = line.trim();
+          if (!trimmed) return;
           
-          fmText.split('\n').forEach(line => {
-            const trimmed = line.trim();
-            if (!trimmed) return;
-            
-            if (trimmed.startsWith('-') && frontmatter.paths) {
-              const val = trimmed.substring(1).trim().replace(/['"]/g, '');
-              frontmatter.paths.push(val);
-              return;
+          if (trimmed.startsWith('-') && frontmatter.paths) {
+            const val = trimmed.substring(1).trim().replace(/['"]/g, '');
+            frontmatter.paths.push(val);
+            return;
+          }
+
+          const colonIndex = trimmed.indexOf(':');
+          if (colonIndex > 0) {
+            const key = trimmed.substring(0, colonIndex).trim();
+            let val = trimmed.substring(colonIndex + 1).trim();
+            if (val === '' || val === '[]' || val === '-') {
+              frontmatter[key] = [];
+            } else {
+              frontmatter[key] = val.replace(/['"]/g, '');
             }
-
-            const colonIndex = trimmed.indexOf(':');
-            if (colonIndex > 0) {
-              const key = trimmed.substring(0, colonIndex).trim();
-              let val = trimmed.substring(colonIndex + 1).trim();
-              if (val === '' || val === '[]' || val === '-') {
-                frontmatter[key] = [];
-              } else {
-                frontmatter[key] = val.replace(/['"]/g, '');
-              }
-            }
-          });
-        }
+          }
+        });
       }
+    }
 
-      if (frontmatter.globs) {
-        globs = frontmatter.globs;
-      } else if (frontmatter.paths) {
-        if (Array.isArray(frontmatter.paths)) {
-          globs = frontmatter.paths.map(p => p.replace(/^\*\*?\//, '')).join(', ');
-        } else {
-          globs = frontmatter.paths.replace(/^\*\*?\//, '');
-        }
+    if (frontmatter.globs) {
+      globs = frontmatter.globs;
+    } else if (frontmatter.paths) {
+      if (Array.isArray(frontmatter.paths)) {
+        globs = frontmatter.paths.map(p => p.replace(/^\*\*?\//, '')).join(', ');
       } else {
-        if (relPath.includes('typescript')) {
-          globs = '*.ts, *.tsx, *.js, *.jsx, tsconfig.json';
-        }
+        globs = frontmatter.paths.replace(/^\*\*?\//, '');
       }
-
-      if (frontmatter.description) {
-        description = frontmatter.description;
-      } else {
-        const matchHeading = fileBody.match(/^#\s+(.+)$/m);
-        if (matchHeading) {
-          description = matchHeading[1].trim();
-        }
+    } else {
+      if (relPath.includes('typescript')) {
+        globs = '*.ts, *.tsx, *.js, *.jsx, tsconfig.json';
       }
+    }
 
-      const finalContent = `---
+    if (frontmatter.description) {
+      description = frontmatter.description;
+    } else {
+      const matchHeading = fileBody.match(/^#\s+(.+)$/m);
+      if (matchHeading) {
+        description = matchHeading[1].trim();
+      }
+    }
+
+    const finalContent = `---
 description: ${description}
 globs: ${globs}
 ---
 ${fileBody}`;
 
-      const destPath = path.join(cursorRulesDir, `${name}.mdc`);
-      fs.writeFileSync(destPath, finalContent, 'utf8');
-      log(`Generated Cursor Rule: .cursor/rules/${name}.mdc`);
-    });
-  }
+    const destPath = path.join(cursorRulesDir, `${name}.mdc`);
+    fs.writeFileSync(destPath, finalContent, 'utf8');
+    log(`Generated Cursor Rule: .cursor/rules/${name}.mdc`);
+  });
 } catch (err) {
   logError('Failed to set up Cursor rules.', err);
 }
 
-// 4. Ensure CLAUDE.md, GEMINI.md, and .cursorrules exist
+// 5. Ensure CLAUDE.md, GEMINI.md, and .cursorrules exist
 const claudeMdPath = path.resolve(__dirname, 'CLAUDE.md');
 const geminiMdPath = path.resolve(__dirname, 'GEMINI.md');
 const cursorrulesPath = path.resolve(__dirname, '.cursorrules');
@@ -158,6 +205,7 @@ This repository uses a unified AI configuration located in the \`.ai/\` director
 - Skills: \`.ai/skills/\`
 - Custom Agents: \`.ai/agents/\`
 - Custom Commands: \`.ai/commands/\`
+- Workflows: \`.ai/workflows/\` (compiled to \`.cursor/rules/\` for Cursor, and linked to \`.agents/workflows/\` for Antigravity)
 
 ## Commands and Workflow
 
